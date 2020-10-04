@@ -71,11 +71,7 @@ scikit-learn是基于python的一个开源且可商用的工具包，常用于�
     - **LinearRegression**
 
         线性回归预测的调用方式在sklearn. linear_model. LinearRegression()中定义
-        其[官方文档](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html#sklearn.linear_model.LinearRegression)中有较多数学类英语名词，故不作分析，只简要介绍可调用的方法。
-
-    
-
-
+        其[官方文档](https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html#sklearn.linear_model.LinearRegression)中有较多数学类英语名词，故不作分析，欢迎有能力者提交PR补充。
 - **pandas**
 
     是一款基于Numpy的分析结构化数据的工具集，本实验使用了包中的DataFrame模块，这个模块以表格的方式存储数据，方便展示以及矩阵运算。
@@ -96,8 +92,61 @@ scikit-learn是基于python的一个开源且可商用的工具包，常用于�
     plt.axis( ) 用于设定坐标轴的取值范围，用[ Axis1Start, Axits1End [ , AxisNextStart,AxisNextEnd [ ... ] ] ]表示
     比如[ 0, 5, 0, 10]表示x轴为0-5，y轴为0-10。
 
-    plot.xlabel('xname') 用于设定轴名称。
+    pyplot.xlabel('xname') 用于设定轴名称。
 
     plt.show( ) 用于显示绘制好的图。
 
+    plt.scatter(x,y) 绘制散点图
+
+    关于方法详细的使用方式请见官方文档
+
+## 源代码
+
+```py
+import pandas as pd #只有被注释的第一段代码需要使用
+import numpy as np
+from sklearn import datasets 
+from sklearn.linear_model import LinearRegression 
+from matplotlib import pyplot as plt 
+
+plt.rcParams['font.sans-serif']=['SimHei']  #使用支持中文的字体
+v_housing=datasets.load_boston()            #导入波士顿房价数据集
+
+'''这些代码都是用于其他目的，可自行取消注释并使用
+
+#本段代码用于展示数据
+v_bos=pd.DataFrame(v_housing.data)  #pd库能使数据以更加清晰的方式存储，方便显示
+print(v_bos.head(5))    #打印前五行数据
+------------------------------------------------------------------------------
+
+#本段代码用散点图展示不同特征与价格之间的关系
+x_data=v_housing.data       #导入全部数据
+y_data=v_housing.target     #导入价格数据，一维数组
+v_namedata=v_housing.feature_names  #导入特征的名称
+
+##分别按13种属性值绘图，初步判断关系
+for i in range(13):
+    plt.subplot(7,2,i+1)    #设置子图参数
+    plt.scatter(x_data[:,i],y_data,s=20)    #散点图，填入第i列数据值与其价格
+    plt.title(v_namedata[i])    #标题取对应特征的名称
+    plt.show()
+-------------------------------------------------------------------------
+'''
+
+x=v_housing.data[:,np.newaxis,3]    #取第三个特征的x值，形成501行一列的矩阵
+y=v_housing.target          #target指数据集的最后一列
+lm=LinearRegression()       #引用线性回归类
+lm.fit(x,y)                 #填入数据
+
+print('方程的确定性系数R的平方：',lm.score(x,y))
+print('线性回归算法w值:',lm.coef_)
+print('线性回归算法b值：',lm.intercept_)
+#绘图
+plt.scatter(x,y,color='blue')   #实际数据用散点
+plt.plot(x,lm.predict(x),color='green',linewidth=6) #预测结果用直线
+plt.ylabel('房屋价格')
+plt.title('线性回归住宅平均房间数RM与房屋价格PRICE的关系')
+plt.show()
+
+```
 
